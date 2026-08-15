@@ -12,6 +12,7 @@ from email_service import send_otp_email
 app = Flask(__name__)
 
 import config
+import database
 
 app.secret_key = config.SECRET_KEY
 app.config['SESSION_COOKIE_HTTPONLY'] = True
@@ -35,6 +36,7 @@ DB_PATH = os.path.join(BASE_DIR, "Database", "sales_manager.db")
 print("Database Path:", DB_PATH)
 
 def get_db():
+    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
