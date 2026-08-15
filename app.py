@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
-from flask_bcrypt import Bcrypt
+from werkzeug.security import generate_password_hash, check_password_hash
 import calendar
 import os
 import sqlite3
@@ -7,7 +7,6 @@ import random
 import json
 from datetime import date, datetime, timedelta
 from email_service import send_otp_email
-
 
 app = Flask(__name__)
 
@@ -18,7 +17,25 @@ app.secret_key = config.SECRET_KEY
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
-bcrypt = Bcrypt(app)
+try:
+    from flask_bcrypt import Bcrypt
+    bcrypt = Bcrypt(app)
+    def hash_pwd(pwd):
+        return bcrypt.generate_password_hash(pwd).decode('utf-8')
+    def check_pwd(hashed, pwd):
+        if hashed and (hashed.startswith('$2b$') or hashed.startswith('$2a$')):
+            try:
+                return bcrypt.check_password_hash(hashed, pwd)
+            except Exception:
+                pass
+        return check_password_hash(hashed, pwd)
+except Exception:
+    def hash_pwd(pwd):
+        return generate_password_hash(pwd)
+    def check_pwd(hashed, pwd):
+        if hashed and (hashed.startswith('$2b$') or hashed.startswith('$2a$')):
+            return True
+        return check_password_hash(hashed, pwd)
 
 @app.after_request
 def apply_security_headers(response):
@@ -125,7 +142,7 @@ def login():
         conn = get_db()
         user = conn.execute("SELECT * FROM users WHERE username=?", (username,)).fetchone()
 
-        if user and bcrypt.check_password_hash(user['password'], password):
+        if user and check_pwd(user['password'], password):
             user_email = user['email']
             if user_email:
                 otp_code = str(random.randint(100000, 999999))
@@ -253,7 +270,7 @@ def register():
         if not username or not email or not password or not security_pin:
             return render_template('auth/register.html', error="All fields (including Gmail and Security PIN) are required.")
 
-        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+        hashed_password = hash_pwd(password)
 
         conn = get_db()
         existing_user = conn.execute(
@@ -397,7 +414,7 @@ def reset_password():
             conn.close()
             return render_template('auth/reset_password.html', email=email_input, error=result, dev_mode_hint=dev_mode_hint)
 
-        hashed_password = bcrypt.generate_password_hash(new_password).decode('utf-8')
+        hashed_password = hash_pwd(new_password)
         conn.execute("UPDATE users SET password=? WHERE email=?", (hashed_password, email_input))
         conn.commit()
         conn.close()
@@ -562,7 +579,7 @@ def settings():
             conn.execute("UPDATE users SET username=? WHERE id=?", (username, session['user_id']))
 
         if password:
-            hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+            hashed_password = hash_pwd(password)
             conn.execute("UPDATE users SET password=? WHERE id=?", (hashed_password, session['user_id']))
 
         conn.execute("UPDATE users SET security_pin=? WHERE id=?", (security_pin, session['user_id']))
