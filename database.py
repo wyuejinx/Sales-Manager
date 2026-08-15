@@ -2,10 +2,19 @@ import sqlite3
 import os
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-DB_PATH = os.path.join(BASE_DIR, "Database", "sales_manager.db")
-os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
 
-conn = sqlite3.connect(DB_PATH)
+if os.environ.get('VERCEL'):
+    DB_PATH = '/tmp/sales_manager.db'
+else:
+    DB_PATH = os.path.join(BASE_DIR, "Database", "sales_manager.db")
+
+try:
+    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
+    conn = sqlite3.connect(DB_PATH)
+except Exception:
+    DB_PATH = '/tmp/sales_manager.db'
+    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
+    conn = sqlite3.connect(DB_PATH)
 cursor = conn.cursor()
 
 cursor.execute('''

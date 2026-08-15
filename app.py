@@ -29,15 +29,23 @@ def apply_security_headers(response):
     return response
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-DB_PATH = os.path.join(BASE_DIR, "Database", "sales_manager.db")
+
+if os.environ.get('VERCEL'):
+    DB_PATH = '/tmp/sales_manager.db'
+else:
+    DB_PATH = os.path.join(BASE_DIR, "Database", "sales_manager.db")
 
 # DATABASE CONNECTION
 
-print("Database Path:", DB_PATH)
-
 def get_db():
-    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
-    conn = sqlite3.connect(DB_PATH)
+    global DB_PATH
+    try:
+        os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
+        conn = sqlite3.connect(DB_PATH)
+    except Exception:
+        DB_PATH = '/tmp/sales_manager.db'
+        os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
+        conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
 
