@@ -1,0 +1,12 @@
+{
+  "app_name": "Sales Manager Mobile",
+  "package_name": "com.softwarebuddy.salesmanager",
+  "version": "1.0.0",
+  "theme_color": "#1e293b",
+  "background_color": "#0f172a",
+  "icon_path": "D:\\SalesManager\\static\\images\\logo.svg",
+  "cloud_deployment": {
+    "procfile": "D:\\SalesManager\\Procfile",
+    "requirements": "D:\\SalesManager\\requirements.txt"
+  }
+}
