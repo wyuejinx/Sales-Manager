@@ -45,6 +45,18 @@ def apply_security_headers(response):
     response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
     return response
 
+@app.errorhandler(Exception)
+def handle_500_exception(e):
+    import traceback
+    return f"""
+    <div style="font-family: monospace; padding: 30px; background: #0f172a; color: #f8fafc; border-radius: 12px; margin: 20px;">
+        <h2 style="color: #ef4444;">Application Exception Log Details</h2>
+        <p style="color: #94a3b8;">{str(e)}</p>
+        <hr style="border-color: #334155; margin: 20px 0;">
+        <pre style="background: #1e293b; padding: 20px; border-radius: 8px; overflow-x: auto; color: #38bdf8;">{traceback.format_exc()}</pre>
+    </div>
+    """, 500
+
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 def is_read_only_fs():
