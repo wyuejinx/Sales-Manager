@@ -1,0 +1,109 @@
+<div class="sidebar" id="sidebar">
+
+    <div class="sidebar-header">
+
+        <div class="sidebar-top">
+
+            <div class="logo-box">
+                <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="Sales Manager Logo" width="56" height="56" style="border-radius: 16px;">
+            </div>
+
+        </div>
+
+        <div class="brand-text">
+
+            <h2>Sales Manager</h2>
+
+            <span>Business Dashboard</span>
+
+        </div>
+
+    </div>
+
+    <div class="menu-title">
+        MAIN MENU
+    </div>
+
+    <ul class="menu">
+
+        <li>
+            <a href="{{ url_for('dashboard') }}"
+               data-title="Dashboard"
+               class="{% if request.endpoint=='dashboard' %}active{% endif %}">
+                <i class="bi bi-grid-fill"></i>
+                <span class="link-text">Dashboard</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="{{ url_for('clients') }}"
+               data-title="Clients"
+               class="{% if request.endpoint=='clients' %}active{% endif %}">
+                <i class="bi bi-people-fill"></i>
+                <span class="link-text">Clients</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="{{ url_for('services') }}"
+               class="{% if request.endpoint=='services' %}active{% endif %}" data-title="Services">
+                <i class="bi bi-box-seam-fill"></i>
+                <span class="link-text">Services</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="{{ url_for('transactions') }}"
+               class="{% if request.endpoint=='transactions' %}active{% endif %}" data-title="Transactions">
+                <i class="bi bi-receipt-cutoff"></i>
+                <span class="link-text">Transactions</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="{{ url_for('records') }}"
+               class="{% if request.endpoint in ['records', 'reports'] %}active{% endif %}" data-title="Records">
+                <i class="bi bi-journal-bookmark-fill"></i>
+                <span class="link-text">Records</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="{{ url_for('monthly_records') }}"
+               class="{% if request.endpoint=='monthly_records' %}active{% endif %}" data-title="Monthly Sales">
+                <i class="bi bi-calendar3"></i>
+                <span class="link-text">Monthly Sales</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="{{ url_for('daily_ledger') }}"
+               class="{% if request.endpoint=='daily_ledger' %}active{% endif %}" data-title="Daily Ledger">
+                <i class="bi bi-journal-text"></i>
+                <span class="link-text">Daily Ledger</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="{{ url_for('settings') }}"
+               class="{% if request.endpoint=='settings' %}active{% endif %}" data-title="Settings">
+                <i class="bi bi-gear-fill"></i>
+                <span class="link-text">Settings</span>
+            </a>
+        </li>
+
+    </ul>
+
+    <div class="sidebar-footer">
+
+        <a href="{{ url_for('logout') }}" class="logout-btn">
+
+            <i class="bi bi-box-arrow-right"></i>
+
+            Logout
+
+        </a>
+
+    </div>
+
+</div>

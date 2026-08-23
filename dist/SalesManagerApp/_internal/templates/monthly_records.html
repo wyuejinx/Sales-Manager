@@ -1,0 +1,158 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}Sales Manager | Monthly Sales{% endblock %}
+{% block page_title %}Monthly Sales{% endblock %}
+
+{% block content %}
+
+<div class="clients-page">
+
+    <div class="page-header">
+        <div>
+            <div class="page-badge">
+                <i class="bi bi-calendar3"></i>
+                Monthly Sales Archive
+            </div>
+            <h2>Monthly Sales Tracking</h2>
+            <p>Archive and track your historical business performance month by month.</p>
+        </div>
+
+        <div class="page-header-meta d-flex align-items-center gap-3">
+            <span class="page-pill">
+                <i class="bi bi-archive-fill"></i>
+                {{ archives|length }} archives
+            </span>
+            <form method="POST" action="/save_monthly_record/{{ current_month_key }}" style="margin: 0;">
+                <button type="submit" class="btn btn-primary btn-sm">
+                    <i class="bi bi-safe2-fill"></i>
+                    Save / Update Month
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 4 Statistics Cards Matching Dashboard Layout -->
+    <div class="row g-4 mb-4 dashboard-stats">
+        <!-- Card 1: Active Month -->
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card clients-card">
+                <div class="stat-card-content">
+                    <small>Active Month</small>
+                    <h2>{{ current_month_name }}</h2>
+                    <span class="text-success d-inline-flex align-items-center gap-1" style="font-weight: 600;">
+                        <span class="pulse-dot"></span>
+                        Live Performance
+                    </span>
+                </div>
+                <div class="icon-box">
+                    <i class="bi bi-calendar-event"></i>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Card 2: Total Revenue -->
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card services-card">
+                <div class="stat-card-content">
+                    <small>Total Revenue</small>
+                    <h2>₱{{ "%.2f"|format(current_total_sales) }}</h2>
+                    <span>{{ current_tx_count }} records this month</span>
+                </div>
+                <div class="icon-box">
+                    <i class="bi bi-cash"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 3: Paid Amount -->
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card revenue-card">
+                <div class="stat-card-content">
+                    <small>Paid Amount</small>
+                    <h2>₱{{ "%.2f"|format(current_paid_sales) }}</h2>
+                    <span>Completed payments</span>
+                </div>
+                <div class="icon-box">
+                    <i class="bi bi-check-circle-fill"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 4: Pending Amount -->
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card transaction-card">
+                <div class="stat-card-content">
+                    <small>Pending Amount</small>
+                    <h2>₱{{ "%.2f"|format(current_pending_sales) }}</h2>
+                    <span>Awaiting payments</span>
+                </div>
+                <div class="icon-box">
+                    <i class="bi bi-hourglass-split"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <!-- Saved Archives table (Full Width) -->
+        <div class="col-lg-12">
+            <div class="modern-card">
+                <div class="card-header-custom">
+                    <div>
+                        <h4>Archived Monthly Reports</h4>
+                        <small>Saved snapshots of historical monthly values</small>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table align-middle clients-table">
+                        <thead>
+                            <tr>
+                                <th>No.</th>
+                                <th>Month</th>
+                                <th>Total Sales</th>
+                                <th>Paid</th>
+                                <th>Pending</th>
+                                <th>Records</th>
+                                <th>Saved At</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for archive in archives %}
+                            <tr>
+                                <td>#{{ loop.index }}</td>
+                                <td>
+                                    <strong style="color: var(--text);">{{ archive.month_name }}</strong>
+                                </td>
+                                <td>₱{{ "%.2f"|format(archive.total_sales) }}</td>
+                                <td class="text-success">₱{{ "%.2f"|format(archive.paid_sales) }}</td>
+                                <td class="text-warning">₱{{ "%.2f"|format(archive.pending_sales) }}</td>
+                                <td>{{ archive.transaction_count }}</td>
+                                <td class="text-nowrap">{{ archive.saved_at }}</td>
+                                <td>
+                                    <div class="action-group">
+                                        <a class="action-link delete" href="/delete_monthly_record/{{ archive.id }}" onclick="return confirm('Are you sure you want to delete this archive record?')">
+                                            <i class="bi bi-trash3"></i>
+                                            Delete
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="8" class="text-center text-muted py-4">
+                                    No monthly sales archives found. Click "Save / Update Month" to create one.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

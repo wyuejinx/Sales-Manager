@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}Sales Manager | Business Dashboard{% endblock %}</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/logo.svg') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/logo.svg') }}">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/logo.svg') }}">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    {% include 'layout/sidebar.html' %}
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <main class="content-wrapper">
+
+        {% include 'layout/navbar.html' %}
+
+        {% block content %}
+        {% endblock %}
+
+    </main>
+
+</div>
+
+<!-- Custom Security PIN Modal -->
+<div id="pinModal" class="pin-modal-overlay d-none">
+    <div class="pin-modal-card">
+        <div class="pin-modal-header">
+            <div class="pin-icon-wrapper">
+                <i class="bi bi-shield-lock-fill"></i>
+            </div>
+            <h4>Security Verification</h4>
+            <p>Please enter your PIN to authorize this action.</p>
+        </div>
+        <div class="pin-modal-body" style="width:100%;">
+            <div class="pin-input-container">
+                <input type="password" id="pinInput" maxlength="8" placeholder="••••" autocomplete="off" readonly>
+            </div>
+            <div class="pin-keypad">
+                <button type="button" class="pin-key" data-val="1">1</button>
+                <button type="button" class="pin-key" data-val="2">2</button>
+                <button type="button" class="pin-key" data-val="3">3</button>
+                <button type="button" class="pin-key" data-val="4">4</button>
+                <button type="button" class="pin-key" data-val="5">5</button>
+                <button type="button" class="pin-key" data-val="6">6</button>
+                <button type="button" class="pin-key" data-val="7">7</button>
+                <button type="button" class="pin-key" data-val="8">8</button>
+                <button type="button" class="pin-key" data-val="9">9</button>
+                <button type="button" class="pin-key pin-clear"><i class="bi bi-backspace"></i></button>
+                <button type="button" class="pin-key" data-val="0">0</button>
+                <button type="button" class="pin-key pin-submit-key"><i class="bi bi-check-lg"></i></button>
+            </div>
+        </div>
+        <div class="pin-modal-footer">
+            <button type="button" class="btn btn-secondary w-100" id="pinCancelBtn">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Delete Confirmation Modal -->
+<div id="confirmModal" class="pin-modal-overlay d-none">
+    <div class="pin-modal-card">
+        <div class="pin-icon-wrapper" style="background: rgba(239, 68, 68, 0.12); color: var(--danger);">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+        </div>
+        <div class="pin-modal-header">
+            <h4>Confirm Deletion</h4>
+            <p id="confirmModalText">Are you sure you want to delete this record?</p>
+        </div>
+        <div class="pin-modal-footer d-flex gap-2" style="width: 100%;">
+            <button type="button" class="btn btn-secondary w-50" id="confirmCancelBtn">Cancel</button>
+            <button type="button" class="btn btn-danger w-50" id="confirmOkBtn">Delete</button>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Alert Modal (e.g. for Access Denied / Incorrect PIN) -->
+<div id="alertModal" class="pin-modal-overlay d-none">
+    <div class="pin-modal-card">
+        <div class="pin-icon-wrapper" style="background: rgba(239, 68, 68, 0.12); color: var(--danger);">
+            <i class="bi bi-x-circle-fill"></i>
+        </div>
+        <div class="pin-modal-header">
+            <h4 id="alertModalTitle">Access Denied</h4>
+            <p id="alertModalText">Incorrect Security PIN. Access Denied.</p>
+        </div>
+        <div class="pin-modal-footer" style="width: 100%;">
+            <button type="button" class="btn btn-secondary w-100" id="alertOkBtn">OK</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+
+</html>

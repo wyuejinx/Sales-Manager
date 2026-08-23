@@ -1,0 +1,69 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+
+<div class="clients-page">
+
+    <div class="page-header">
+        <div>
+            <div class="page-badge">
+                <i class="bi bi-pencil-square"></i>
+                Edit Client
+            </div>
+            <h2>Update Client Details</h2>
+            <p>Modify the customer information below.</p>
+        </div>
+
+        <div class="page-header-meta">
+            <a href="/clients" class="btn btn-outline-primary">
+                <i class="bi bi-arrow-left"></i>
+                Back to Clients
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-lg-4">
+            <div class="modern-card h-100">
+                <div class="card-header-custom">
+                    <div>
+                        <h4>Current Details</h4>
+                        <small>Active record values</small>
+                    </div>
+                </div>
+                <div class="setting-list">
+                    <div class="setting-item flex-column align-items-start gap-1">
+                        <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--muted); font-weight: 600;">Client Name</span>
+                        <strong>{{ client.client_name }}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="modern-card client-form-card">
+                <div class="card-header-custom">
+                    <div>
+                        <h4>Edit Client</h4>
+                        <small>Keep your client records up to date</small>
+                    </div>
+                </div>
+
+                <form method="POST" class="client-form">
+                    <div class="mb-3">
+                        <label class="form-label">Client Name</label>
+                        <input type="text" class="form-control" name="client_name" value="{{ client.client_name }}" placeholder="Client Name" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-save2"></i>
+                        Update Client
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

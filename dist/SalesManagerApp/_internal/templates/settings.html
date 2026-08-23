@@ -1,0 +1,93 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}Sales Manager | Settings{% endblock %}
+
+{% block content %}
+
+<div class="clients-page">
+
+    <div class="page-header">
+        <div>
+            <div class="page-badge">
+                <i class="bi bi-gear-fill"></i>
+                Account Settings
+            </div>
+            <h2>Settings</h2>
+            <p>Manage your account access and app preferences.</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="modern-card">
+                <div class="card-header-custom">
+                    <div>
+                        <h4>Profile</h4>
+                        <small>Account overview</small>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="avatar-circle">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-1">{{ user.username }}</h5>
+                        <p class="text-muted mb-0">Administrator account</p>
+                    </div>
+                </div>
+
+                <div class="setting-list">
+                    <div class="setting-item">
+                        <span>Status</span>
+                        <strong>Online</strong>
+                    </div>
+                    <div class="setting-item">
+                        <span>Role</span>
+                        <strong>Admin</strong>
+                    </div>
+                    <div class="setting-item">
+                        <span>Access</span>
+                        <strong>Full control</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="modern-card">
+                <div class="card-header-custom">
+                    <div>
+                        <h4>Update Account</h4>
+                        <small>Change username or password</small>
+                    </div>
+                </div>
+
+                <form method="POST" class="client-form">
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" name="username" value="{{ user.username }}" placeholder="Enter username">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">New Password</label>
+                        <input type="password" class="form-control" name="password" placeholder="Leave blank to keep current password">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Security PIN (for actions like Edit and Delete)</label>
+                        <input type="text" class="form-control" name="security_pin" value="{{ user.security_pin or '' }}" placeholder="Enter security PIN" maxlength="8">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle-fill"></i>
+                        Save Changes
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
