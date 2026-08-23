@@ -292,15 +292,49 @@ def safe_render_template(template_name, **context):
 @app.route('/api/index', methods=['GET', 'POST'])
 @app.route('/api/index/', methods=['GET', 'POST'])
 def login():
-    # Route dispatcher for Vercel query/path preservation
-    if request.args.get('code') or (request.args.get('email') and 'verify' in request.full_path):
+    # Universal Route Dispatcher for Vercel & serverless environments
+    action = request.args.get('action', '').lower()
+    path_hint = request.full_path.lower()
+
+    if request.args.get('code') or (request.args.get('email') and 'verify' in path_hint):
         return verify_login()
 
-    if request.args.get('action') == 'register' or 'register' in request.full_path:
+    if action == 'register' or 'register' in path_hint:
         return register()
 
-    if request.args.get('action') == 'forgot_password' or 'forgot' in request.full_path:
+    if action == 'forgot_password' or 'forgot' in path_hint:
         return forgot_password()
+
+    if action == 'dashboard' or 'dashboard' in path_hint:
+        return dashboard()
+
+    if action == 'clients' or 'clients' in path_hint:
+        return clients()
+
+    if action == 'services' or 'services' in path_hint:
+        return services()
+
+    if action == 'transactions' or 'transactions' in path_hint:
+        return transactions()
+
+    if action == 'records' or 'records' in path_hint or 'reports' in path_hint:
+        return records()
+
+    if action == 'monthly_records' or 'monthly' in path_hint:
+        return monthly_records()
+
+    if action == 'daily_ledger' or 'daily' in path_hint:
+        return daily_ledger()
+
+    if action == 'settings' or 'settings' in path_hint:
+        return settings()
+
+    if action == 'logout' or 'logout' in path_hint:
+        return logout()
+
+    # If the user is already logged in, redirect them to dashboard
+    if 'user_id' in session and request.method == 'GET':
+        return redirect('/dashboard')
 
     if request.method == 'POST':
         username = request.form.get('username', '').strip()

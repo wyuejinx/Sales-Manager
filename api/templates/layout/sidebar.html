@@ -27,66 +27,66 @@
     <ul class="menu">
 
         <li>
-            <a href="{{ url_for('dashboard') }}"
+            <a href="/dashboard?action=dashboard"
                data-title="Dashboard"
-               class="{% if request.endpoint=='dashboard' %}active{% endif %}">
+               class="{% if request.endpoint=='dashboard' or request.args.get('action')=='dashboard' %}active{% endif %}">
                 <i class="bi bi-grid-fill"></i>
                 <span class="link-text">Dashboard</span>
             </a>
         </li>
 
         <li>
-            <a href="{{ url_for('clients') }}"
+            <a href="/clients?action=clients"
                data-title="Clients"
-               class="{% if request.endpoint=='clients' %}active{% endif %}">
+               class="{% if request.endpoint=='clients' or request.args.get('action')=='clients' %}active{% endif %}">
                 <i class="bi bi-people-fill"></i>
                 <span class="link-text">Clients</span>
             </a>
         </li>
 
         <li>
-            <a href="{{ url_for('services') }}"
-               class="{% if request.endpoint=='services' %}active{% endif %}" data-title="Services">
+            <a href="/services?action=services"
+               class="{% if request.endpoint=='services' or request.args.get('action')=='services' %}active{% endif %}" data-title="Services">
                 <i class="bi bi-box-seam-fill"></i>
                 <span class="link-text">Services</span>
             </a>
         </li>
 
         <li>
-            <a href="{{ url_for('transactions') }}"
-               class="{% if request.endpoint=='transactions' %}active{% endif %}" data-title="Transactions">
+            <a href="/transactions?action=transactions"
+               class="{% if request.endpoint=='transactions' or request.args.get('action')=='transactions' %}active{% endif %}" data-title="Transactions">
                 <i class="bi bi-receipt-cutoff"></i>
                 <span class="link-text">Transactions</span>
             </a>
         </li>
 
         <li>
-            <a href="{{ url_for('records') }}"
-               class="{% if request.endpoint in ['records', 'reports'] %}active{% endif %}" data-title="Records">
+            <a href="/records?action=records"
+               class="{% if request.endpoint in ['records', 'reports'] or request.args.get('action') in ['records', 'reports'] %}active{% endif %}" data-title="Records">
                 <i class="bi bi-journal-bookmark-fill"></i>
                 <span class="link-text">Records</span>
             </a>
         </li>
 
         <li>
-            <a href="{{ url_for('monthly_records') }}"
-               class="{% if request.endpoint=='monthly_records' %}active{% endif %}" data-title="Monthly Sales">
+            <a href="/monthly_records?action=monthly_records"
+               class="{% if request.endpoint=='monthly_records' or request.args.get('action')=='monthly_records' %}active{% endif %}" data-title="Monthly Sales">
                 <i class="bi bi-calendar3"></i>
                 <span class="link-text">Monthly Sales</span>
             </a>
         </li>
 
         <li>
-            <a href="{{ url_for('daily_ledger') }}"
-               class="{% if request.endpoint=='daily_ledger' %}active{% endif %}" data-title="Daily Ledger">
+            <a href="/daily_ledger?action=daily_ledger"
+               class="{% if request.endpoint=='daily_ledger' or request.args.get('action')=='daily_ledger' %}active{% endif %}" data-title="Daily Ledger">
                 <i class="bi bi-journal-text"></i>
                 <span class="link-text">Daily Ledger</span>
             </a>
         </li>
 
         <li>
-            <a href="{{ url_for('settings') }}"
-               class="{% if request.endpoint=='settings' %}active{% endif %}" data-title="Settings">
+            <a href="/settings?action=settings"
+               class="{% if request.endpoint=='settings' or request.args.get('action')=='settings' %}active{% endif %}" data-title="Settings">
                 <i class="bi bi-gear-fill"></i>
                 <span class="link-text">Settings</span>
             </a>
@@ -96,7 +96,7 @@
 
     <div class="sidebar-footer">
 
-        <a href="{{ url_for('logout') }}" class="logout-btn">
+        <a href="/logout?action=logout" class="logout-btn">
 
             <i class="bi bi-box-arrow-right"></i>
 
