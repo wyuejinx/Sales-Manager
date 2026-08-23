@@ -8,7 +8,13 @@ import json
 from datetime import date, datetime, timedelta
 from email_service import send_otp_email
 
-app = Flask(__name__)
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+
+app = Flask(
+    __name__,
+    template_folder=os.path.join(BASE_DIR, 'templates'),
+    static_folder=os.path.join(BASE_DIR, 'static')
+)
 
 import config
 import database
