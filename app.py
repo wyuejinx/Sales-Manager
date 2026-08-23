@@ -301,7 +301,8 @@ def login():
 
         if user and check_pwd(user['password'], password):
             user_email = user['email']
-            if user_email:
+            # If SMTP is configured with Gmail password, send 2FA OTP. Otherwise log in directly to dashboard!
+            if user_email and config.MAIL_USERNAME and config.MAIL_PASSWORD:
                 otp_code = str(random.randint(100000, 999999))
                 expires_at = (datetime.now() + timedelta(minutes=10)).strftime('%Y-%m-%d %H:%M:%S')
 
@@ -320,21 +321,16 @@ def login():
                 conn.commit()
                 conn.close()
 
-                dispatch_result = send_otp_email(user_email, otp_code, purpose="Login Security")
+                send_otp_email(user_email, otp_code, purpose="Login Security")
                 session['pending_login_email'] = user_email
-                if dispatch_result.get('dev_mode'):
-                    session['login_dev_mode_hint'] = otp_code
-                else:
-                    session.pop('login_dev_mode_hint', None)
-
-                return redirect(url_for('verify_login'))
+                return redirect('/verify_login')
             else:
                 conn.close()
                 session['user_id'] = user['id']
                 session['username'] = user['username']
                 session['first_name'] = user['first_name']
                 session['last_name'] = user['last_name']
-                return redirect(url_for('dashboard'))
+                return redirect('/dashboard')
 
         conn.close()
         return safe_render_template('auth/login.html', error='Incorrect username or password. Please try again.')
