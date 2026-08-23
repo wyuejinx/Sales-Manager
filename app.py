@@ -93,6 +93,27 @@ def get_db():
     conn.row_factory = sqlite3.Row
     return conn
 
+def ensure_default_user():
+    try:
+        conn = get_db()
+        user = conn.execute("SELECT id FROM users WHERE username = 'softwarebuddy'").fetchone()
+        if not user:
+            from werkzeug.security import generate_password_hash
+            hashed = generate_password_hash('m@tthew014324!')
+            conn.execute(
+                "INSERT INTO users (username, password, first_name, last_name, security_pin, email, is_verified) VALUES (?, ?, ?, ?, ?, ?, 1)",
+                ('softwarebuddy', hashed, 'Matthew', 'Buddy', '1234', 'matthew891x@gmail.com')
+            )
+            conn.commit()
+        conn.close()
+    except Exception as e:
+        print("ensure_default_user error:", e)
+
+try:
+    ensure_default_user()
+except Exception:
+    pass
+
 
 def seed_realistic_data(user_id):
     if user_id != 1:

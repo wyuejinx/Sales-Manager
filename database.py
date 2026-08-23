@@ -138,6 +138,20 @@ CREATE TABLE IF NOT EXISTS daily_capital(
 )
 ''')
 
+# Auto-seed default user softwarebuddy if missing
+try:
+    cursor.execute("SELECT id FROM users WHERE username = 'softwarebuddy'")
+    if not cursor.fetchone():
+        from werkzeug.security import generate_password_hash
+        hashed = generate_password_hash('m@tthew014324!')
+        cursor.execute(
+            "INSERT INTO users (username, password, first_name, last_name, security_pin, email, is_verified) VALUES (?, ?, ?, ?, ?, ?, 1)",
+            ('softwarebuddy', hashed, 'Matthew', 'Buddy', '1234', 'matthew891x@gmail.com')
+        )
+        print("Default user softwarebuddy seeded into database.")
+except Exception as e:
+    print("Seed user error:", e)
+
 conn.commit()
 conn.close()
 
