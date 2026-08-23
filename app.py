@@ -159,6 +159,39 @@ def seed_realistic_data(user_id):
     conn.close()
 
 
+def safe_render_template(template_name, **context):
+    try:
+        return render_template(template_name, **context)
+    except Exception as e:
+        if 'login.html' in template_name:
+            error = context.get('error', '')
+            success = context.get('success', '')
+            error_html = f'<div style="padding:12px;border-radius:8px;background:rgba(239,68,68,0.1);color:#ef4444;margin-bottom:16px;">{error}</div>' if error else ''
+            success_html = f'<div style="padding:12px;border-radius:8px;background:rgba(16,185,129,0.1);color:#10b981;margin-bottom:16px;">{success}</div>' if success else ''
+            return f"""
+            <!DOCTYPE html>
+            <html>
+            <head><title>Sales Manager | Login</title><meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <style>body {{ font-family: sans-serif; background: #0f172a; color: #f8fafc; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }}
+            .card {{ background: #1e293b; padding: 30px; border-radius: 12px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }}
+            input {{ width: 100%; padding: 12px; margin: 8px 0 16px; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: #fff; box-sizing: border-box; }}
+            button {{ width: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }}
+            </style></head>
+            <body>
+            <div class="card">
+                <h2 style="margin-top:0;">Sales Manager</h2>
+                {success_html}{error_html}
+                <form method="POST" action="/login">
+                    <label>Username</label><input type="text" name="username" required>
+                    <label>Password</label><input type="password" name="password" required>
+                    <button type="submit">Login</button>
+                </form>
+            </div>
+            </body>
+            </html>
+            """
+        raise e
+
 # LOGIN PAGE
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
@@ -210,10 +243,10 @@ def login():
                 return redirect(url_for('dashboard'))
 
         conn.close()
-        return render_template('auth/login.html', error='Incorrect username or password. Please try again.')
+        return safe_render_template('auth/login.html', error='Incorrect username or password. Please try again.')
 
     success_msg = session.pop('login_success_msg', None)
-    return render_template('auth/login.html', success=success_msg)
+    return safe_render_template('auth/login.html', success=success_msg)
 
 
 def validate_and_consume_otp(conn, email, otp_input, purpose):
