@@ -292,6 +292,16 @@ def safe_render_template(template_name, **context):
 @app.route('/api/index', methods=['GET', 'POST'])
 @app.route('/api/index/', methods=['GET', 'POST'])
 def login():
+    # Route dispatcher for Vercel query/path preservation
+    if request.args.get('code') or (request.args.get('email') and 'verify' in request.full_path):
+        return verify_login()
+
+    if request.args.get('action') == 'register' or 'register' in request.full_path:
+        return register()
+
+    if request.args.get('action') == 'forgot_password' or 'forgot' in request.full_path:
+        return forgot_password()
+
     if request.method == 'POST':
         username = request.form.get('username', '').strip()
         password = request.form.get('password', '').strip()
