@@ -8,10 +8,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body class="auth-page">
+<body class="auth-page dark-theme">
 <script>
-    if (localStorage.getItem('salesManagerTheme') === 'dark') {
-        document.body.classList.add('dark-theme');
+    if (localStorage.getItem('salesManagerTheme') === 'light') {
+        document.body.classList.remove('dark-theme');
     }
 </script>
 

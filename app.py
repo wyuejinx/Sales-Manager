@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify, send_from_directory
 from werkzeug.security import generate_password_hash, check_password_hash
 import calendar
 import os
@@ -84,6 +84,22 @@ def handle_500_exception(e):
         <pre style="background: #1e293b; padding: 20px; border-radius: 8px; overflow-x: auto; color: #38bdf8;">{traceback.format_exc()}</pre>
     </div>
     """, 500
+
+@app.route('/static/<path:filename>')
+def serve_static_file(filename):
+    for folder in [
+        os.path.join(BASE_DIR, 'static'),
+        os.path.join(BASE_DIR, 'api', 'static'),
+        os.path.join(os.path.dirname(BASE_DIR), 'static'),
+        os.path.join(os.path.dirname(BASE_DIR), 'api', 'static'),
+        '/var/task/static',
+        '/var/task/api/static',
+        '/var/task/SalesManager/static'
+    ]:
+        file_path = os.path.join(folder, filename)
+        if os.path.exists(file_path):
+            return send_from_directory(folder, filename)
+    return "Not Found", 404
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
