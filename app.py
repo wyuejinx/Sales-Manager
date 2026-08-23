@@ -8,13 +8,26 @@ import json
 from datetime import date, datetime, timedelta
 from email_service import send_otp_email
 
+import jinja2
+
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+
+template_dirs = [
+    os.path.join(BASE_DIR, 'templates'),
+    os.path.join(os.path.dirname(BASE_DIR), 'templates'),
+    '/var/task/templates',
+    '/var/task/SalesManager/templates'
+]
 
 app = Flask(
     __name__,
     template_folder=os.path.join(BASE_DIR, 'templates'),
     static_folder=os.path.join(BASE_DIR, 'static')
 )
+
+app.jinja_loader = jinja2.ChoiceLoader([
+    jinja2.FileSystemLoader(d) for d in template_dirs if os.path.exists(d)
+] + [app.jinja_loader])
 
 import config
 import database
@@ -184,11 +197,44 @@ def safe_render_template(template_name, **context):
     try:
         return render_template(template_name, **context)
     except Exception as e:
-        if 'login.html' in template_name:
-            error = context.get('error', '')
-            success = context.get('success', '')
-            error_html = f'<div style="padding:12px;border-radius:8px;background:rgba(239,68,68,0.1);color:#ef4444;margin-bottom:16px;">{error}</div>' if error else ''
-            success_html = f'<div style="padding:12px;border-radius:8px;background:rgba(16,185,129,0.1);color:#10b981;margin-bottom:16px;">{success}</div>' if success else ''
+        email = context.get('email', '')
+        error = context.get('error', '')
+        success = context.get('success', '')
+        dev_mode_hint = context.get('dev_mode_hint', '')
+
+        error_html = f'<div style="padding:12px;border-radius:8px;background:rgba(239,68,68,0.15);color:#ef4444;margin-bottom:16px;font-weight:500;">{error}</div>' if error else ''
+        success_html = f'<div style="padding:12px;border-radius:8px;background:rgba(16,185,129,0.15);color:#10b981;margin-bottom:16px;font-weight:500;">{success}</div>' if success else ''
+        dev_hint_html = f'<div style="padding:12px;border-radius:8px;background:rgba(59,130,246,0.15);color:#60a5fa;margin-bottom:16px;font-size:0.85rem;"><strong>[DEV MODE OTP CODE]:</strong> {dev_mode_hint}</div>' if dev_mode_hint else ''
+
+        if template_name.endswith('verify_login.html') or template_name.endswith('verify_email.html'):
+            return f"""
+            <!DOCTYPE html>
+            <html>
+            <head><title>Sales Manager | Verification</title><meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <style>
+                body {{ font-family: sans-serif; background: #090d16; color: #f8fafc; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }}
+                .card {{ background: #131b2e; padding: 36px; border-radius: 16px; width: 100%; max-width: 420px; border: 1px solid rgba(148, 163, 184, 0.1); box-shadow: 0 25px 50px rgba(0,0,0,0.5); }}
+                input {{ width: 100%; padding: 14px; margin: 10px 0 20px; border-radius: 8px; border: 1px solid #2a364f; background: #090d16; color: #fff; box-sizing: border-box; font-size: 1.2rem; text-align: center; letter-spacing: 0.2em; }}
+                button {{ width: 100%; padding: 14px; background: #2563eb; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 1rem; }}
+                button:hover {{ background: #1d4ed8; }}
+            </style></head>
+            <body>
+            <div class="card">
+                <h2 style="margin-top:0; color:#fff;">Security Verification</h2>
+                <p style="color:#94a3b8; font-size:0.9rem; line-height:1.5;">Enter the 6-digit verification code sent to <strong>{email}</strong></p>
+                {dev_hint_html}{success_html}{error_html}
+                <form method="POST" action="/verify_login">
+                    <input type="hidden" name="email" value="{email}">
+                    <label style="color:#94a3b8; font-size:0.85rem;">6-Digit OTP Code</label>
+                    <input type="text" name="otp_code" placeholder="123456" maxlength="6" autofocus required>
+                    <button type="submit">Verify & Login</button>
+                </form>
+            </div>
+            </body>
+            </html>
+            """
+
+        if template_name.endswith('login.html'):
             return f"""
             <!DOCTYPE html>
             <html>
