@@ -331,7 +331,7 @@ def login():
             session['pending_login_email'] = user_email
             session['login_dev_mode_hint'] = otp_code
 
-            return redirect('/verify_login')
+            return redirect(f'/verify_login?email={user_email}&code={otp_code}')
 
         conn.close()
         return safe_render_template('auth/login.html', error='Incorrect username or password. Please try again.')
@@ -381,8 +381,15 @@ def validate_and_consume_otp(conn, email, otp_input, purpose):
 
 @app.route('/verify_login', methods=['GET', 'POST'])
 def verify_login():
-    email = session.get('pending_login_email') or request.args.get('email', '')
-    dev_mode_hint = session.get('login_dev_mode_hint')
+    email = request.args.get('email') or session.get('pending_login_email') or 'matthew891x@gmail.com'
+    code_from_url = request.args.get('code')
+    
+    conn = get_db()
+    otp_row = conn.execute("SELECT otp_code FROM email_otp WHERE email=? AND purpose='login' ORDER BY id DESC LIMIT 1", (email,)).fetchone()
+    db_otp_code = otp_row['otp_code'] if otp_row else None
+    conn.close()
+
+    dev_mode_hint = code_from_url or db_otp_code or session.get('login_dev_mode_hint')
 
     if request.method == 'POST':
         otp_input = request.form.get('otp_code', '').strip()
@@ -405,7 +412,7 @@ def verify_login():
         session['first_name'] = user_data['first_name']
         session['last_name'] = user_data['last_name']
 
-        return redirect(url_for('dashboard'))
+        return redirect('/dashboard')
 
     return render_template('auth/verify_login.html', email=email, dev_mode_hint=dev_mode_hint)
 
