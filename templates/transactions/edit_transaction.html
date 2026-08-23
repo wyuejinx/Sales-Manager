@@ -1,0 +1,137 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}Sales Manager | Transactions{% endblock %}
+
+{% block content %}
+
+<div class="clients-page">
+
+    <div class="page-header">
+        <div>
+            <div class="page-badge">
+                <i class="bi bi-pencil-square"></i>
+                Edit Transaction
+            </div>
+            <h2>Update Transaction</h2>
+            <p>Change the client, service, amount, payment method, status, or notes.</p>
+        </div>
+
+        <div class="page-header-meta">
+            <a href="/transactions" class="btn btn-outline-primary">
+                <i class="bi bi-arrow-left"></i>
+                Back to Transactions
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-lg-4">
+            <div class="modern-card h-100">
+                <div class="card-header-custom">
+                    <div>
+                        <h4>Current Details</h4>
+                        <small>Active record values</small>
+                    </div>
+                </div>
+                <div class="setting-list">
+                    <div class="setting-item flex-column align-items-start gap-1">
+                        <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--muted); font-weight: 600;">Client</span>
+                        <strong>{{ transaction.client_name }}</strong>
+                    </div>
+                    <div class="setting-item flex-column align-items-start gap-1">
+                        <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--muted); font-weight: 600;">Service</span>
+                        <strong>{{ transaction.service_name }}</strong>
+                    </div>
+                    <div class="setting-item flex-column align-items-start gap-1">
+                        <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--muted); font-weight: 600;">Amount</span>
+                        <strong>₱{{ transaction.amount }}</strong>
+                    </div>
+                    <div class="setting-item flex-column align-items-start gap-1">
+                        <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--muted); font-weight: 600;">Payment Method</span>
+                        <strong>{{ transaction.payment_method }}</strong>
+                    </div>
+                    <div class="setting-item flex-column align-items-start gap-1">
+                        <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--muted); font-weight: 600;">Status</span>
+                        <span class="status-badge {% if transaction.payment_status == 'Paid' %}paid{% else %}pending{% endif %}">
+                            {{ transaction.payment_status }}
+                        </span>
+                    </div>
+                    <div class="setting-item flex-column align-items-start gap-1">
+                        <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--muted); font-weight: 600;">Date</span>
+                        <strong>{{ transaction.transaction_date }}</strong>
+                    </div>
+                    {% if transaction.notes %}
+                    <div class="setting-item flex-column align-items-start gap-1">
+                        <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--muted); font-weight: 600;">Notes</span>
+                        <div class="text-muted" style="font-size: 0.9rem; word-break: break-word;">{{ transaction.notes }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="modern-card client-form-card">
+                <div class="card-header-custom">
+                    <div>
+                        <h4>Edit Transaction</h4>
+                        <small>Update payment details and status</small>
+                    </div>
+                </div>
+
+                <form method="POST" class="client-form">
+                    <div class="mb-3">
+                        <label class="form-label">Client</label>
+                        <select class="form-select" name="client_id" required>
+                            <option value="">Select Client</option>
+                            {% for c in clients %}
+                                <option value="{{ c.id }}" {% if transaction.client_id == c.id %}selected{% endif %}>{{ c.client_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Service</label>
+                        <select class="form-select" name="service_id" required>
+                            <option value="">Select Service</option>
+                            {% for s in services %}
+                                <option value="{{ s.id }}" data-price="{{ s.price }}" {% if transaction.service_id == s.id %}selected{% endif %}>{{ s.service_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Amount</label>
+                        <input type="number" class="form-control" name="amount" value="{{ transaction.amount }}" placeholder="Amount" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Payment Method</label>
+                        <input type="text" class="form-control" name="payment_method" value="{{ transaction.payment_method }}" placeholder="Payment Method" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" name="payment_status" required>
+                            <option value="Paid" {% if transaction.payment_status == 'Paid' %}selected{% endif %}>Paid</option>
+                            <option value="Pending" {% if transaction.payment_status == 'Pending' %}selected{% endif %}>Pending</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Transaction Date</label>
+                        <input type="date" class="form-control" name="transaction_date" value="{{ transaction.transaction_date }}" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-save2"></i>
+                        Update Transaction
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

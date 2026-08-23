@@ -1,0 +1,403 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}Sales Manager | Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="hero-dashboard">
+
+    <div class="hero-left">
+
+        <div class="hero-badge">
+            Dashboard Overview
+        </div>
+
+        <h1>Welcome back 👋</h1>
+
+        <div class="summary-indicators">
+            <span class="summary-label">Today's Summary:</span>
+            <div class="indicator-chips">
+                <span class="indicator-chip sales-chip">
+                    <span class="chip-dot"></span>
+                    Daily Sales: <strong>₱{{ "%.2f"|format(today_sales) }}</strong>
+                </span>
+                <span class="indicator-chip capital-chip">
+                    <span class="chip-dot"></span>
+                    Capital: <strong>₱{{ "%.2f"|format(today_capital) }}</strong>
+                </span>
+                <span class="indicator-chip profit-chip" style="background: rgba(16, 185, 129, 0.12); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.2);">
+                    <span class="chip-dot" style="background: #10B981;"></span>
+                    Net Margin: <strong>₱{{ "%.2f"|format(today_sales - today_capital) }}</strong>
+                </span>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="hero-actions">
+
+        <a href="{{ url_for('clients') }}" class="btn btn-primary">
+            <i class="bi bi-person-plus-fill"></i>
+            Add New Client
+        </a>
+
+        <a href="{{ url_for('transactions') }}" class="btn btn-outline-primary">
+            <i class="bi bi-plus-circle-fill"></i>
+            New Transaction
+        </a>
+
+    </div>
+
+</div>
+
+{% if user and user.security_pin == '1234' %}
+<div class="alert alert-warning d-flex align-items-center justify-content-between p-3 mb-4" style="border-radius: 16px; border: 1px solid rgba(245, 158, 11, 0.15); background: rgba(245, 158, 11, 0.08); color: #D97706; font-weight: 500; font-size: 0.9rem; margin-top: 16px;">
+    <div class="d-flex align-items-center gap-2">
+        <i class="bi bi-exclamation-triangle-fill" style="font-size: 1.1rem;"></i>
+        <span><strong>Security Alert:</strong> You are currently using the default Security PIN (<strong>1234</strong>). Please change it to secure your account actions.</span>
+    </div>
+    <a href="{{ url_for('settings') }}" class="btn btn-sm btn-warning" style="border-radius: 10px; font-weight: 600; font-size: 0.8rem; padding: 6px 12px; background: #D97706; border: none; color: #fff;">Set Custom PIN</a>
+</div>
+{% endif %}
+
+<div class="row g-4 mt-1 dashboard-stats">
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="stat-card clients-card">
+
+            <div class="stat-card-content">
+
+                <small>Total Clients</small>
+
+                <h2>{{ total_clients }}</h2>
+
+                <span>Registered Customers</span>
+
+            </div>
+
+            <div class="icon-box">
+
+                <i class="bi bi-people-fill"></i>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="stat-card services-card">
+
+            <div class="stat-card-content">
+
+                <small>Total Services</small>
+
+                <h2>{{ total_services }}</h2>
+
+                <span>Available Services</span>
+
+            </div>
+
+            <div class="icon-box">
+
+                <i class="bi bi-tools"></i>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="stat-card revenue-card">
+
+            <div class="stat-card-content">
+
+                <small>This Month Revenue</small>
+
+                <h2>₱{{ "%.2f"|format(monthly_sales) }}</h2>
+
+                <span>Net sales after capital outlays</span>
+
+            </div>
+
+            <div class="icon-box">
+
+                <i class="bi bi-cash-stack"></i>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="stat-card transaction-card">
+
+            <div class="stat-card-content">
+
+                <small>Transactions</small>
+
+                <h2>{{ total_transactions }}</h2>
+
+                <span>Business Records</span>
+
+            </div>
+
+            <div class="icon-box">
+
+                <i class="bi bi-receipt-cutoff"></i>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="row mt-4">
+
+    <div class="col-lg-8">
+
+        <div class="modern-card">
+
+            <div class="card-header-custom d-flex justify-content-between align-items-center">
+                <div>
+                    <h4 class="mb-0">Revenue Analytics</h4>
+                    <small class="text-muted">Monthly performance tracking for {{ month_name }}</small>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="pulse-dot"></span>
+                    <span id="syncStatusText" class="text-muted" style="font-size: 0.85rem; font-weight: 500;">Live Feed</span>
+                </div>
+            </div>
+
+            <canvas id="salesChart" height="120"></canvas>
+
+        </div>
+
+    </div>
+
+    <div class="col-lg-4">
+
+        <div class="modern-card">
+
+            <div class="card-header-custom">
+                <div>
+                    <h4>Revenue Summary</h4>
+                    <small class="text-muted">Recent payment performance</small>
+                </div>
+            </div>
+
+            <div class="summary-item">
+
+                <div>
+                    <strong>Paid Revenue</strong>
+                    <small>Completed payments this month</small>
+                </div>
+
+                <h3 class="text-success">
+                    ₱{{ monthly_sales }}
+                </h3>
+
+            </div>
+
+            <hr>
+
+            <div class="summary-item">
+
+                <div>
+                    <strong>Pending Revenue</strong>
+                    <small>Waiting for Payment</small>
+                </div>
+
+                <h3 class="text-warning">
+                    ₱{{ pending_sales }}
+                </h3>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="modern-card mt-4">
+
+    <div class="card-header-custom">
+
+        <h4>Recent Transactions</h4>
+
+    </div>
+
+    <div class="table-responsive">
+
+        <table class="table align-middle">
+
+            <thead>
+
+            <tr>
+
+                <th>Client</th>
+                <th>Service</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Actions</th>
+
+            </tr>
+
+            </thead>
+
+            <tbody>
+
+            {% for transaction in recent_transactions %}
+
+            <tr>
+
+                <td>{{ transaction.client_name }}</td>
+
+                <td>{{ transaction.service_name }}</td>
+
+                <td>₱{{ "%.2f"|format(transaction.amount) }}</td>
+
+                <td>
+
+                    {% if transaction.payment_status=="Paid" %}
+
+                    <span class="badge badge-paid">
+                        Paid
+                    </span>
+
+                    {% else %}
+
+                    <span class="badge badge-pending">
+                        Pending
+                    </span>
+
+                    {% endif %}
+
+                </td>
+
+                <td class="text-nowrap">{{ transaction.transaction_date[2:] }}</td>
+
+                <td>
+                    <a class="action-link edit" href="/edit_transaction/{{ transaction.id }}">
+                        <i class="bi bi-pencil-square"></i>
+                        Edit
+                    </a>
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script id="chart-labels-data" type="application/json">{{ chart_labels|tojson|safe }}</script>
+<script id="chart-values-data" type="application/json">{{ chart_values|tojson|safe }}</script>
+
+<script>
+const ctx = document.getElementById('salesChart');
+const chartLabels = JSON.parse(document.getElementById('chart-labels-data').textContent);
+const chartValues = JSON.parse(document.getElementById('chart-values-data').textContent);
+
+let gradient = null;
+
+const salesChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: chartLabels,
+        datasets: [{
+            label: 'Revenue',
+            data: chartValues,
+            fill: true,
+            tension: 0.4,
+            borderColor: '#2563EB',
+            borderWidth: 3,
+            pointBackgroundColor: '#2563EB',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 2,
+            pointRadius: 0,
+            pointHoverRadius: 6,
+            pointHoverBackgroundColor: '#2563EB',
+            pointHoverBorderColor: '#ffffff',
+            pointHoverBorderWidth: 3,
+            backgroundColor: function(context) {
+                const chart = context.chart;
+                const {ctx, chartArea} = chart;
+                if (!chartArea) return null;
+                if (!gradient) {
+                    gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+                    gradient.addColorStop(0, 'rgba(37, 99, 235, 0.16)');
+                    gradient.addColorStop(1, 'rgba(37, 99, 235, 0.0)');
+                }
+                return gradient;
+            }
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false },
+            tooltip: {
+                backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                titleFont: { family: 'Poppins', size: 12, weight: '600' },
+                bodyFont: { family: 'Poppins', size: 13 },
+                padding: 12,
+                cornerRadius: 12,
+                displayColors: false,
+                callbacks: {
+                    label: function(context) {
+                        return ' ₱' + context.parsed.y.toLocaleString();
+                    }
+                }
+            }
+        },
+        scales: {
+            x: {
+                grid: { display: false },
+                ticks: {
+                    font: { family: 'Poppins', size: 11 },
+                    color: '#94A3B8'
+                }
+            },
+            y: {
+                grid: {
+                    color: 'rgba(148, 163, 184, 0.06)',
+                    drawBorder: false
+                },
+                ticks: {
+                    font: { family: 'Poppins', size: 11 },
+                    color: '#94A3B8',
+                    callback: (value) => '₱' + value.toLocaleString()
+                }
+            }
+        },
+        interaction: {
+            intersect: false,
+            mode: 'index'
+        }
+    }
+});
+</script>
+
+{% endblock %}

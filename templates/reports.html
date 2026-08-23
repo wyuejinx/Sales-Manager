@@ -1,0 +1,200 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}Sales Manager | Records{% endblock %}
+
+{% block content %}
+
+<div class="clients-page">
+
+    <div class="page-header">
+        <div>
+            <div class="page-badge">
+                <i class="bi bi-journal-bookmark-fill"></i>
+                Records Center
+            </div>
+            <h2>Business Records</h2>
+            <p>Track recent activity, payments, and customer records in one place.</p>
+        </div>
+
+        <div class="page-header-meta">
+            <span class="page-pill">
+                <i class="bi bi-archive-fill"></i>
+                {{ total_transactions }} records
+            </span>
+        </div>
+    </div>
+
+    <div class="row g-4 dashboard-stats">
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card clients-card">
+                <div class="stat-card-content">
+                    <small>Total Clients</small>
+                    <h2>{{ total_clients }}</h2>
+                    <span>Registered Customers</span>
+                </div>
+                <div class="icon-box">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card services-card">
+                <div class="stat-card-content">
+                    <small>Total Services</small>
+                    <h2>{{ total_services }}</h2>
+                    <span>Available Services</span>
+                </div>
+                <div class="icon-box">
+                    <i class="bi bi-tools"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card revenue-card">
+                <div class="stat-card-content">
+                    <small>Overall Sales (Net)</small>
+                    <h2>₱{{ "%.2f"|format(total_sales) }}</h2>
+                    <span>Net sales after capital outlays</span>
+                </div>
+                <div class="icon-box">
+                    <i class="bi bi-cash-stack"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card transaction-card">
+                <div class="stat-card-content">
+                    <small>Monthly Revenue (Net)</small>
+                    <h2>₱{{ "%.2f"|format(monthly_sales) }}</h2>
+                    <span>This month after capital outlays</span>
+                </div>
+                <div class="icon-box">
+                    <i class="bi bi-calendar3"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mt-1">
+        <div class="col-lg-8">
+            <div class="modern-card">
+                <div class="card-header-custom">
+                    <div>
+                        <h4>Recent Transactions</h4>
+                        <small>Search and review latest payment activity</small>
+                    </div>
+                </div>
+
+                <form method="GET" action="{{ url_for('records') }}" class="search-box">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <input type="text" class="form-control" name="search" placeholder="Search by client, service, status, or method..." value="{{ search_query or '' }}">
+                        <button class="btn btn-primary" type="submit">Search</button>
+                    </div>
+                </form>
+
+                <div class="table-responsive">
+                    <table class="table align-middle clients-table">
+                        <thead>
+                            <tr>
+                                <th>No.</th>
+                                <th>Client</th>
+                                <th>Service</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for transaction in transactions %}
+                            <tr>
+                                <td>#{{ loop.index }}</td>
+                                <td>{{ transaction.client_name }}</td>
+                                <td>{{ transaction.service_name }}</td>
+                                <td>₱{{ "%.2f"|format(transaction.amount) }}</td>
+                                <td>
+                                    <span class="status-badge {% if transaction.payment_status == 'Paid' %}paid{% else %}pending{% endif %}">
+                                        {{ transaction.payment_status }}
+                                    </span>
+                                </td>
+                                <td class="text-nowrap">{{ transaction.transaction_date[2:] }}</td>
+                                <td>
+                                    <div class="action-group">
+                                        <a class="action-link edit" href="/edit_transaction/{{ transaction.id }}">
+                                            <i class="bi bi-pencil-square"></i>
+                                            Edit
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-4">No records found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="modern-card mb-4">
+                <div class="card-header-custom">
+                    <div>
+                        <h4>Latest Clients</h4>
+                        <small>Newest customer entries</small>
+                    </div>
+                </div>
+
+                <div class="record-list">
+                    {% for client in recent_clients %}
+                    <div class="record-list-item">
+                        <div>
+                            <strong>{{ client.client_name }}</strong>
+                            {% if client.email %}
+                            <small>{{ client.email }}</small>
+                            {% endif %}
+                        </div>
+                        {% if client.contact_number %}
+                        <span class="record-pill">{{ client.contact_number }}</span>
+                        {% endif %}
+                    </div>
+                    {% else %}
+                    <div class="text-muted py-2">No clients added yet.</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="modern-card">
+                <div class="card-header-custom">
+                    <div>
+                        <h4>Latest Services</h4>
+                        <small>Recently added offers</small>
+                    </div>
+                </div>
+
+                <div class="record-list">
+                    {% for service in recent_services %}
+                    <div class="record-list-item">
+                        <div>
+                            <strong>{{ service.service_name }}</strong>
+                            <small>₱{{ service.price }}</small>
+                        </div>
+                        <span class="record-pill">Service</span>
+                    </div>
+                    {% else %}
+                    <div class="text-muted py-2">No services added yet.</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
