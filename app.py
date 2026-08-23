@@ -14,15 +14,24 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 template_dirs = [
     os.path.join(BASE_DIR, 'templates'),
+    os.path.join(BASE_DIR, 'api', 'templates'),
     os.path.join(os.path.dirname(BASE_DIR), 'templates'),
+    os.path.join(os.path.dirname(BASE_DIR), 'api', 'templates'),
     '/var/task/templates',
+    '/var/task/api/templates',
     '/var/task/SalesManager/templates'
 ]
+
+static_folder = os.path.join(BASE_DIR, 'static')
+for s in [os.path.join(BASE_DIR, 'static'), os.path.join(BASE_DIR, 'api', 'static'), '/var/task/static', '/var/task/api/static']:
+    if os.path.exists(s):
+        static_folder = s
+        break
 
 app = Flask(
     __name__,
     template_folder=os.path.join(BASE_DIR, 'templates'),
-    static_folder=os.path.join(BASE_DIR, 'static')
+    static_folder=static_folder
 )
 
 app.jinja_loader = jinja2.ChoiceLoader([
@@ -109,14 +118,16 @@ def get_db():
 def ensure_default_user():
     try:
         conn = get_db()
-        user = conn.execute("SELECT id FROM users WHERE username = 'softwarebuddy'").fetchone()
+        user = conn.execute("SELECT id, password FROM users WHERE username = 'softwarebuddy'").fetchone()
+        hashed = hash_pwd('m@tthew014324!')
         if not user:
-            from werkzeug.security import generate_password_hash
-            hashed = generate_password_hash('m@tthew014324!')
             conn.execute(
                 "INSERT INTO users (username, password, first_name, last_name, security_pin, email, is_verified) VALUES (?, ?, ?, ?, ?, ?, 1)",
                 ('softwarebuddy', hashed, 'Matthew', 'Buddy', '1234', 'matthew891x@gmail.com')
             )
+            conn.commit()
+        else:
+            conn.execute("UPDATE users SET password=?, email=?, is_verified=1 WHERE id=?", (hashed, 'matthew891x@gmail.com', user['id']))
             conn.commit()
         conn.close()
     except Exception as e:
