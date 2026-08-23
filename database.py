@@ -17,8 +17,25 @@ def is_read_only_fs():
     except Exception:
         return True
 
+import shutil
+
 if is_read_only_fs():
     DB_PATH = '/tmp/sales_manager.db'
+    if not os.path.exists(DB_PATH):
+        for candidate in [
+            os.path.join(BASE_DIR, "Database", "sales_manager.db"),
+            os.path.join(BASE_DIR, "api", "Database", "sales_manager.db"),
+            "/var/task/Database/sales_manager.db",
+            "/var/task/api/Database/sales_manager.db"
+        ]:
+            if os.path.exists(candidate):
+                try:
+                    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
+                    shutil.copy2(candidate, DB_PATH)
+                    print(f"Copied {candidate} to {DB_PATH}")
+                    break
+                except Exception as e:
+                    print("Error copying candidate DB:", e)
 else:
     DB_PATH = os.path.join(BASE_DIR, "Database", "sales_manager.db")
 

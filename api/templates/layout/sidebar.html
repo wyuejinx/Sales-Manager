@@ -4,8 +4,32 @@
 
         <div class="sidebar-top">
 
-            <div class="logo-box">
-                <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="Sales Manager Logo" width="56" height="56" style="border-radius: 16px;">
+            <div class="logo-box" style="display:flex;align-items:center;justify-content:center;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 128 128" style="border-radius: 16px;">
+                  <defs>
+                    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#3B82F6"/>
+                      <stop offset="50%" stop-color="#6366F1"/>
+                      <stop offset="100%" stop-color="#8B5CF6"/>
+                    </linearGradient>
+                    <linearGradient id="wedgeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#60A5FA"/>
+                      <stop offset="100%" stop-color="#93C5FD"/>
+                    </linearGradient>
+                    <linearGradient id="glass" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.35"/>
+                      <stop offset="40%" stop-color="#ffffff" stop-opacity="0.05"/>
+                      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+                    </linearGradient>
+                  </defs>
+                  <rect width="128" height="128" rx="32" fill="url(#bgGrad)"/>
+                  <path d="M 0 32 Q 64 12 128 32 L 128 32 A 32 32 0 0 0 96 0 L 32 0 A 32 32 0 0 0 0 32 Z" fill="url(#glass)"/>
+                  <g transform="translate(64, 64)">
+                    <path fill="#FFFFFF" opacity="0.95" d="M 0 -36 A 36 36 0 1 0 36 0 L 16 0 A 16 16 0 1 1 0 -16 Z"/>
+                    <path fill="url(#wedgeGrad)" d="M 6 -36 A 36 36 0 0 1 36 -6 L 16 -2 A 16 16 0 0 0 2 -16 Z" transform="translate(4, -4)"/>
+                    <circle cx="0" cy="0" r="6" fill="#FFFFFF"/>
+                  </g>
+                </svg>
             </div>
 
         </div>

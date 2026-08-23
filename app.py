@@ -117,8 +117,26 @@ def is_read_only_fs():
     except Exception:
         return True
 
+import shutil
+
 if is_read_only_fs():
     DB_PATH = '/tmp/sales_manager.db'
+    if not os.path.exists(DB_PATH):
+        for candidate in [
+            os.path.join(BASE_DIR, "Database", "sales_manager.db"),
+            os.path.join(BASE_DIR, "api", "Database", "sales_manager.db"),
+            os.path.join(os.path.dirname(BASE_DIR), "Database", "sales_manager.db"),
+            "/var/task/Database/sales_manager.db",
+            "/var/task/api/Database/sales_manager.db"
+        ]:
+            if os.path.exists(candidate):
+                try:
+                    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
+                    shutil.copy2(candidate, DB_PATH)
+                    print(f"Copied real database {candidate} to {DB_PATH}")
+                    break
+                except Exception as e:
+                    print("Error copying candidate DB in app.py:", e)
 else:
     DB_PATH = os.path.join(BASE_DIR, "Database", "sales_manager.db")
 
@@ -126,6 +144,21 @@ else:
 
 def get_db():
     global DB_PATH
+    if is_read_only_fs() and not os.path.exists(DB_PATH):
+        for candidate in [
+            os.path.join(BASE_DIR, "Database", "sales_manager.db"),
+            os.path.join(BASE_DIR, "api", "Database", "sales_manager.db"),
+            os.path.join(os.path.dirname(BASE_DIR), "Database", "sales_manager.db"),
+            "/var/task/Database/sales_manager.db",
+            "/var/task/api/Database/sales_manager.db"
+        ]:
+            if os.path.exists(candidate):
+                try:
+                    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
+                    shutil.copy2(candidate, DB_PATH)
+                    break
+                except Exception as e:
+                    print("Error in get_db copy:", e)
     os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
@@ -139,11 +172,11 @@ def ensure_default_user():
         if not user:
             conn.execute(
                 "INSERT INTO users (username, password, first_name, last_name, security_pin, email, is_verified) VALUES (?, ?, ?, ?, ?, ?, 1)",
-                ('softwarebuddy', hashed, 'Matthew', 'Buddy', '1234', 'matthew891x@gmail.com')
+                ('softwarebuddy', hashed, 'Software', 'Buddy', '2051', 'matthew891x@gmail.com')
             )
             conn.commit()
         else:
-            conn.execute("UPDATE users SET password=?, email=?, is_verified=1 WHERE id=?", (hashed, 'matthew891x@gmail.com', user['id']))
+            conn.execute("UPDATE users SET password=?, first_name=?, last_name=?, security_pin=?, email=?, is_verified=1 WHERE id=?", (hashed, 'Software', 'Buddy', '2051', 'matthew891x@gmail.com', user['id']))
             conn.commit()
         conn.close()
     except Exception as e:
