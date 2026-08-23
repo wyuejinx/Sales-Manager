@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Manager | Register</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="auth-page">
+<script>
+    if (localStorage.getItem('salesManagerTheme') === 'dark') {
+        document.body.classList.add('dark-theme');
+    }
+</script>
+
+<div class="auth-container">
+    <div class="auth-panel">
+
+        <section class="auth-hero">
+            <span class="auth-badge">Sales Manager</span>
+            <h1>Optimize Your Business</h1>
+            <p>Track transactions, monitor client relations, and archive monthly performance records in a clean, minimalist workspace.</p>
+        </section>
+
+        <div class="auth-card">
+            <h2>Create an Account</h2>
+            <p class="auth-subtitle">Enter your username and password below.</p>
+
+            {% if error %}
+            <div style="padding: 12px; border-radius: 12px; font-size: 0.9rem; margin-bottom: 16px; background: var(--danger-bg); color: var(--danger-text); border: 1px solid var(--border); font-weight: 500;">
+                <i class="bi bi-exclamation-triangle-fill" style="margin-right: 6px;"></i>
+                {{ error }}
+            </div>
+            {% endif %}
+
+            <form method="POST" class="auth-form">
+                <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div>
+                        <label for="first_name">First Name</label>
+                        <input id="first_name" type="text" name="first_name" placeholder="First Name" required>
+                    </div>
+                    <div>
+                        <label for="last_name">Last Name</label>
+                        <input id="last_name" type="text" name="last_name" placeholder="Last Name" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input id="username" type="text" name="username" placeholder="Choose a username" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Gmail Address</label>
+                    <input id="email" type="email" name="email" placeholder="your_name@gmail.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="password-wrapper">
+                        <input id="password" type="password" name="password" placeholder="Create a password" required>
+                        <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('password', this)" title="Show/Hide Password">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="security_pin">Security PIN (4-8 digits)</label>
+                    <input id="security_pin" type="text" name="security_pin" placeholder="Create a Security PIN" maxlength="8" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary auth-submit">Register</button>
+            </form>
+
+            <p style="text-align: center; margin-top: 16px; font-size: 0.9rem; color: var(--muted);">
+                Already have an account? <a href="{{ url_for('login') }}" style="color: var(--primary); font-weight: 600; text-decoration: none;">Login here</a>.
+            </p>
+        </div>
+
+    </div>
+</div>
+
+<script>
+function togglePasswordVisibility(inputId, btn) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    const icon = btn.querySelector('i');
+    if (input.type === 'password') {
+        input.type = 'text';
+        if (icon) icon.className = 'bi bi-eye-slash-fill';
+    } else {
+        input.type = 'password';
+        if (icon) icon.className = 'bi bi-eye';
+    }
+}
+</script>
+</body>
+</html>

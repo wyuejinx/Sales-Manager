@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Manager | Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="auth-page">
+<script>
+    if (localStorage.getItem('salesManagerTheme') === 'dark') {
+        document.body.classList.add('dark-theme');
+    }
+</script>
+
+<div class="auth-container">
+    <div class="auth-panel">
+
+        <section class="auth-hero">
+            <span class="auth-badge">Sales Manager</span>
+            <h1>Optimize Your Business</h1>
+            <p>Track transactions, monitor client relations, and archive monthly performance records in a clean, minimalist workspace.</p>
+        </section>
+
+        <div class="auth-card">
+            <h2>Login to your account</h2>
+            <p class="auth-subtitle">Enter your credentials to continue.</p>
+
+            {% if success %}
+            <div style="padding: 12px; border-radius: 12px; font-size: 0.9rem; margin-bottom: 16px; background: rgba(16, 185, 129, 0.12); color: var(--success, #10b981); border: 1px solid rgba(16, 185, 129, 0.2); font-weight: 500;">
+                <i class="bi bi-check-circle-fill" style="margin-right: 6px;"></i>
+                {{ success }}
+            </div>
+            {% endif %}
+
+            {% if error %}
+            <div style="padding: 12px; border-radius: 12px; font-size: 0.9rem; margin-bottom: 16px; background: var(--danger-bg); color: var(--danger-text); border: 1px solid var(--border); font-weight: 500;">
+                <i class="bi bi-exclamation-triangle-fill" style="margin-right: 6px;"></i>
+                {{ error }}
+            </div>
+            {% endif %}
+
+            <form action="{{ url_for('login') }}" method="POST" class="auth-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input id="username" type="text" name="username" placeholder="Enter your username" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="password-wrapper">
+                        <input id="password" type="password" name="password" placeholder="Enter your password" required>
+                        <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('password', this)" title="Show/Hide Password" aria-label="Toggle Password Visibility">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary auth-submit">Login</button>
+
+                <div style="text-align: right; margin-top: -6px;">
+                    <a href="{{ url_for('forgot_password') }}" style="font-size: 0.82rem; color: var(--primary); font-weight: 600; text-decoration: none;">Forgot Password?</a>
+                </div>
+            </form>
+
+            <p style="text-align: center; margin-top: 10px; font-size: 0.88rem; color: var(--muted);">
+                Don't have an account? <a href="{{ url_for('register') }}" style="color: var(--primary); font-weight: 600; text-decoration: none;">Register here</a>.
+            </p>
+        </div>
+
+    </div>
+</div>
+
+<script>
+function togglePasswordVisibility(inputId, btn) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    const icon = btn.querySelector('i');
+    if (input.type === 'password') {
+        input.type = 'text';
+        if (icon) icon.className = 'bi bi-eye-slash-fill';
+    } else {
+        input.type = 'password';
+        if (icon) icon.className = 'bi bi-eye';
+    }
+}
+</script>
+</body>
+</html>

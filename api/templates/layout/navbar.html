@@ -1,0 +1,47 @@
+<nav class="top-navbar sticky-navbar">
+
+    <div class="navbar-left">
+
+        <button class="btn sidebar-toggle-btn d-lg-none" id="sidebarToggle" type="button" aria-label="Toggle Navigation">
+            <i class="bi bi-list"></i>
+        </button>
+
+        <div class="page-title">
+
+            <h3 class="mb-0">
+                <span id="greetingText">Welcome</span>, <strong>{{ session.get('first_name') }} {{ session.get('last_name') }}!</strong>
+            </h3>
+            <span class="navbar-subtitle">
+                {% block page_title %}
+                Sales Manager | Business Dashboard
+                {% endblock %}
+            </span>
+
+        </div>
+
+    </div>
+
+    <div class="navbar-right">
+
+        <div class="db-status-badge d-none d-md-flex align-items-center">
+            <span class="pulse-dot"></span>
+            <span class="db-status-text">DB Active</span>
+        </div>
+
+        <label class="theme-toggle" for="themeModeToggle">
+            <span>Dark mode</span>
+            <span class="toggle-switch">
+                <input type="checkbox" id="themeModeToggle">
+                <span class="toggle-track"></span>
+            </span>
+        </label>
+
+        <div class="nav-datetime d-none d-sm-block" id="liveDateTime" style="margin:0 12px; font-size:0.95rem; text-align:right;">
+            <span class="date"></span>
+            <span style="display:inline-block; width:8px"></span>
+            <span class="time"></span>
+        </div>
+
+    </div>
+
+</nav>

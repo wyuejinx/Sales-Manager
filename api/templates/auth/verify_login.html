@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Verification - Sales Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="auth-page">
+<script>
+    if (localStorage.getItem('salesManagerTheme') === 'dark') {
+        document.body.classList.add('dark-theme');
+    }
+</script>
+
+<div class="auth-container">
+    <div class="auth-panel">
+
+        <section class="auth-hero">
+            <span class="auth-badge">Two-Factor Authentication</span>
+            <h1>Security Verification</h1>
+            <p>We've sent a 6-digit login verification code to your Gmail address. Enter it below to complete your login.</p>
+        </section>
+
+        <div class="auth-card">
+            <h2>Enter 6-Digit Code</h2>
+            <p class="auth-subtitle">Sent to <strong>{{ email }}</strong></p>
+
+            {% if error %}
+            <div style="padding: 12px; border-radius: 12px; font-size: 0.9rem; margin-bottom: 16px; background: var(--danger-bg); color: var(--danger-text); border: 1px solid var(--border); font-weight: 500;">
+                <i class="bi bi-exclamation-triangle-fill" style="margin-right: 6px;"></i>
+                {{ error }}
+            </div>
+            {% endif %}
+
+            {% if dev_mode_hint %}
+            <div style="padding: 12px; border-radius: 12px; font-size: 0.85rem; margin-bottom: 16px; background: rgba(37, 99, 235, 0.12); color: #60a5fa; border: 1px solid rgba(37, 99, 235, 0.2); font-weight: 500;">
+                <i class="bi bi-info-circle-fill" style="margin-right: 6px;"></i>
+                Development Mode Code: <strong>{{ dev_mode_hint }}</strong>
+            </div>
+            {% endif %}
+
+            <form method="POST" class="auth-form">
+                <input type="hidden" name="email" value="{{ email }}">
+
+                <div class="form-group">
+                    <label for="otp_code">6-Digit Verification Code</label>
+                    <input id="otp_code" type="text" name="otp_code" placeholder="123456" maxlength="6" style="text-align: center; font-size: 1.4rem; letter-spacing: 0.25em; font-weight: 700;" required autofocus>
+                </div>
+
+                <button type="submit" class="btn btn-primary auth-submit">Verify & Login</button>
+            </form>
+
+            <p style="text-align: center; margin-top: 16px; font-size: 0.85rem; color: var(--muted);">
+                Back to <a href="{{ url_for('login') }}" style="color: var(--primary); font-weight: 600; text-decoration: none;">Login Screen</a>.
+            </p>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

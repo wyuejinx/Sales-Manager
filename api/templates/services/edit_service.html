@@ -1,0 +1,78 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+
+<div class="clients-page">
+
+    <div class="page-header">
+        <div>
+            <div class="page-badge">
+                <i class="bi bi-pencil-square"></i>
+                Edit Service
+            </div>
+            <h2>Update Service Details</h2>
+            <p>Modify the service name, description, or price.</p>
+        </div>
+
+        <div class="page-header-meta">
+            <a href="/services" class="btn btn-outline-primary">
+                <i class="bi bi-arrow-left"></i>
+                Back to Services
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-lg-4">
+            <div class="modern-card h-100">
+                <div class="card-header-custom">
+                    <div>
+                        <h4>Current Details</h4>
+                        <small>Active record values</small>
+                    </div>
+                </div>
+                <div class="setting-list">
+                    <div class="setting-item flex-column align-items-start gap-1">
+                        <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--muted); font-weight: 600;">Service Name</span>
+                        <strong>{{ service.service_name }}</strong>
+                    </div>
+                    <div class="setting-item flex-column align-items-start gap-1">
+                        <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--muted); font-weight: 600;">Price</span>
+                        <strong>₱{{ service.price }}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="modern-card client-form-card">
+                <div class="card-header-custom">
+                    <div>
+                        <h4>Edit Service</h4>
+                        <small>Keep your service offerings current</small>
+                    </div>
+                </div>
+
+                <form method="POST" class="client-form">
+                    <div class="mb-3">
+                        <label class="form-label">Service Name</label>
+                        <input type="text" class="form-control" name="service_name" value="{{ service.service_name }}" placeholder="Service Name" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Price</label>
+                        <input type="number" step="100" class="form-control" name="price" value="{{ service.price }}" placeholder="Price" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-save2"></i>
+                        Update Service
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

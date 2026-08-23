@@ -1,0 +1,16 @@
+{
+  "name": "Sales Manager App",
+  "short_name": "SalesManager",
+  "description": "Business Sales & Revenue Management System",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#1e293b",
+  "icons": [
+    {
+      "src": "/static/images/logo.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

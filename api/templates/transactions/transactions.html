@@ -1,0 +1,163 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}Sales Manager | Transactions{% endblock %}
+
+{% block content %}
+
+<div class="clients-page">
+
+    <div class="page-header">
+        <div>
+            <div class="page-badge">
+                <i class="bi bi-receipt-cutoff"></i>
+                Transaction Management
+            </div>
+            <h2>Transactions</h2>
+            <p>Record payments and update transaction status anytime.</p>
+        </div>
+
+        <div class="page-header-meta">
+            <span class="page-pill">
+                <i class="bi bi-credit-card-2-front"></i>
+                {{ transactions|length }} records
+            </span>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-lg-3">
+            <div class="modern-card client-form-card">
+                <div class="card-header-custom">
+                    <div>
+                        <h4>Add New Transaction</h4>
+                        <small>Create a payment record</small>
+                    </div>
+                </div>
+
+                <form method="POST" class="client-form">
+                    <div class="mb-3">
+                        <label class="form-label">Client</label>
+                        <select class="form-select" name="client_id" required>
+                            <option value="">Select Client</option>
+                            {% for c in clients %}
+                                <option value="{{ c.id }}">{{ c.client_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Service</label>
+                        <select class="form-select" name="service_id" required>
+                            <option value="">Select Service</option>
+                            {% for s in services %}
+                                <option value="{{ s.id }}" data-price="{{ s.price }}">{{ s.service_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Amount</label>
+                        <input type="number" class="form-control" name="amount" placeholder="Amount" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Payment Method</label>
+                        <input type="text" class="form-control" name="payment_method" placeholder="Payment Method" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" name="payment_status" required>
+                            <option value="Paid">Paid</option>
+                            <option value="Pending">Pending</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Transaction Date</label>
+                        <input type="date" class="form-control" name="transaction_date" value="{{ today_str }}" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-plus-circle-fill"></i>
+                        Add Transaction
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-9">
+            <div class="modern-card">
+                <div class="card-header-custom">
+                    <div>
+                        <h4>All Transactions</h4>
+                        <small>Search and update payment statuses</small>
+                    </div>
+                </div>
+
+                <form method="GET" action="/transactions" class="search-box">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <input type="text" class="form-control" name="search" placeholder="Search by client, service, status, or method..." value="{{ search_query or '' }}">
+                        <button class="btn btn-primary" type="submit">Search</button>
+                    </div>
+                </form>
+
+                <div class="table-responsive">
+                    <table class="table align-middle clients-table">
+                        <thead>
+                            <tr>
+                                <th>No.</th>
+                                <th>Client</th>
+                                <th>Service</th>
+                                <th>Amount</th>
+                                <th>Payment Method</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for t in transactions %}
+                            <tr>
+                                <td>#{{ loop.index }}</td>
+                                <td>{{ t.client_name }}</td>
+                                <td>{{ t.service_name }}</td>
+                                <td>₱{{ "%.2f"|format(t.amount) }}</td>
+                                <td>{{ t.payment_method }}</td>
+                                <td>
+                                    <span class="status-badge {% if t.payment_status == 'Paid' %}paid{% else %}pending{% endif %}">
+                                        {{ t.payment_status }}
+                                    </span>
+                                </td>
+                                <td class="text-nowrap">{{ t.transaction_date[2:] }}</td>
+                                <td>
+                                    <div class="action-group">
+                                        <a class="action-link edit" href="/edit_transaction/{{ t.id }}">
+                                            <i class="bi bi-pencil-square"></i>
+                                            Edit
+                                        </a>
+                                        <a class="action-link delete" href="/delete_transaction/{{ t.id }}" onclick="return confirm('Delete this transaction?')">
+                                            <i class="bi bi-trash3"></i>
+                                            Delete
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="8" class="text-center text-muted py-4">
+                                    No transactions found.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
