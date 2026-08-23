@@ -3,18 +3,27 @@ import os
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
-if os.environ.get('VERCEL'):
+def is_read_only_fs():
+    if os.environ.get('VERCEL') or os.environ.get('VERCEL_ENV') or os.environ.get('AWS_LAMBDA_FUNCTION_NAME'):
+        return True
+    try:
+        test_dir = os.path.join(BASE_DIR, "Database")
+        os.makedirs(test_dir, exist_ok=True)
+        test_file = os.path.join(test_dir, ".perm_test")
+        with open(test_file, 'w') as f:
+            f.write('1')
+        os.remove(test_file)
+        return False
+    except Exception:
+        return True
+
+if is_read_only_fs():
     DB_PATH = '/tmp/sales_manager.db'
 else:
     DB_PATH = os.path.join(BASE_DIR, "Database", "sales_manager.db")
 
-try:
-    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
-    conn = sqlite3.connect(DB_PATH)
-except Exception:
-    DB_PATH = '/tmp/sales_manager.db'
-    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
-    conn = sqlite3.connect(DB_PATH)
+os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
+conn = sqlite3.connect(DB_PATH)
 cursor = conn.cursor()
 
 cursor.execute('''
